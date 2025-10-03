@@ -2,7 +2,7 @@ import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/state
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
+import { useScrollTableToPosition } from '@/object-record/record-table/hooks/useScrollTableToPosition';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -16,7 +16,7 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
 
   const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
-  const { scrollToPosition } = useScrollToPosition();
+  const { scrollTableToPosition } = useScrollTableToPosition();
 
   useEffect(() => {
     if (isNonEmptyString(lastShowPageRecordId)) {
@@ -31,12 +31,20 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
 
         const positionInPx = recordPosition * RECORD_TABLE_ROW_HEIGHT;
 
-        scrollToPosition(positionInPx);
+        scrollTableToPosition({
+          horizontalScrollInPx: 0,
+          verticalScrollInPx: positionInPx,
+        });
 
         setHasInitializedScroll(true);
       }
     }
-  }, [hasInitializedScroll, lastShowPageRecordId, records, scrollToPosition]);
+  }, [
+    hasInitializedScroll,
+    lastShowPageRecordId,
+    records,
+    scrollTableToPosition,
+  ]);
 
   return <></>;
 };

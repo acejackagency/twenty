@@ -1,4 +1,7 @@
-import { SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedRowTreadmillEffect';
+import {
+  SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_ACTIVATE_LOW_DETAILS,
+  SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_DEACTIVATE_LOW_DETAILS,
+} from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedRowTreadmillEffect';
 import { TABLE_VIRTUALIZATION_DEBUG_ACTIVATED } from '@/object-record/record-table/virtualization/constants/TableVirtualizationDebugActivated';
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -34,8 +37,12 @@ export const RecordTableVirtualizedDebugHelper = () => {
             - Low details activated : {lowDetailsActivated ? 'Yes' : 'No'}
           </span>
           <span style={{ paddingLeft: 12 }}>
-            - Rows / sec threshold for low details :{' '}
-            {SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND}
+            - Rows / sec threshold to activate low details :
+            {SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_ACTIVATE_LOW_DETAILS}
+            and to deactivate :
+            {
+              SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_DEACTIVATE_LOW_DETAILS
+            }
           </span>
         </div>,
         document.body,

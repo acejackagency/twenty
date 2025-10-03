@@ -16,12 +16,14 @@ import { useRecoilCallback } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
 // TODO: export those constants
-export const SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND = 140;
-export const TIME_BEFORE_DEACTIVATING_LOW_DETAILS = 300;
-export const NUMBER_OF_EVENTS_TO_COMPUTE_AVERAGE = 50;
+export const SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_ACTIVATE_LOW_DETAILS = 120;
+export const SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_DEACTIVATE_LOW_DETAILS = 30;
+
+export const TIME_BEFORE_DEACTIVATING_LOW_DETAILS = 20;
+export const NUMBER_OF_EVENTS_TO_COMPUTE_AVERAGE = 10;
 
 const TIME_BETWEEN_TWO_SCROLL_HANDLING = 20;
-const LAST_SCROLL_DEBOUNCE_TIME = 200;
+const LAST_SCROLL_DEBOUNCE_TIME = 300;
 
 export const RecordTableVirtualizedRowTreadmillEffect = () => {
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
@@ -206,6 +208,8 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
   const activateLowDetails = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
+        deactivateLowDetailsDebounced.cancel();
+
         const currentLowDetailsActivated = getSnapshotValue(
           snapshot,
           lowDetailsActivatedCallbackState,
@@ -232,8 +236,6 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
         if (currentLowDetailsActivated !== true) {
           set(lowDetailsActivatedCallbackState, true);
         }
-
-        deactivateLowDetailsDebounced.cancel();
       },
     [
       lowDetailsActivatedCallbackState,
@@ -302,12 +304,21 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
           const averageScrollSpeedInRowsPerSecond =
             averageScrollSpeedInPixelsPerSecond / (RECORD_TABLE_ROW_HEIGHT + 1);
 
+          console.log(averageScrollSpeedInRowsPerSecond);
+
           if (
             averageScrollSpeedInRowsPerSecond >
-            SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND
+            SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_ACTIVATE_LOW_DETAILS
           ) {
+            // console.log('activate');
             activateLowDetails();
-          } else {
+            handleAfterLastScrollDebounced.cancel();
+          } else if (
+            averageScrollSpeedInRowsPerSecond <
+            SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_DEACTIVATE_LOW_DETAILS
+          ) {
+            console.log('deactivating');
+
             deactivateLowDetailsDebounced();
 
             triggerFetchPages();
@@ -327,6 +338,7 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
   const handleAfterLastScroll = useRecoilCallback(
     ({ set }) =>
       (scrollEvent: Event) => {
+        console.log('after last scroll');
         deactivateLowDetails();
 
         handleScroll(scrollEvent);

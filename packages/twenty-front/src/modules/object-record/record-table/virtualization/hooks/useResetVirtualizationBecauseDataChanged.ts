@@ -7,10 +7,12 @@ import { useTriggerFetchPages } from '@/object-record/record-table/virtualizatio
 import { dataLoadingStatusByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilyState';
 import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
 import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+import { tableHasAnyFilterOrSortComponentSelector } from '@/object-record/record-table/virtualization/states/tableHasAnyFilterOrSortComponentSelector';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { type ObjectOperation } from '@/object-record/states/objectOperationsByObjectNameSingularFamilyState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
@@ -101,15 +103,29 @@ export const useResetVirtualizationBecauseDataChanged = (
     ],
   );
 
+  const tableHasAnyFilterOrSort = useRecoilComponentValue(
+    tableHasAnyFilterOrSortComponentSelector,
+  );
+
   const resetVirtualizationBecauseDataChanged = useCallback(
     async (objectOperation: ObjectOperation) => {
       if (!objectOperation.data.type.startsWith('update')) {
         await resetVirtualization();
 
         await triggerFetchPagesWithoutDebounce();
+      } else {
+        if (tableHasAnyFilterOrSort) {
+          await resetVirtualization();
+
+          await triggerFetchPagesWithoutDebounce();
+        }
       }
     },
-    [resetVirtualization, triggerFetchPagesWithoutDebounce],
+    [
+      resetVirtualization,
+      triggerFetchPagesWithoutDebounce,
+      tableHasAnyFilterOrSort,
+    ],
   );
 
   return {

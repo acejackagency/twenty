@@ -19,12 +19,12 @@ import { useDebouncedCallback } from 'use-debounce';
 // We should work on two additional optimization rounds :
 //   - A row take too much time to render
 //   - Requests are too eagerly loading relationships.
-const TIME_BETWEEN_UI_BATCH_UPDATE = 50; // 50 is good
+const TIME_BETWEEN_UI_BATCH_UPDATE = 25; // 50 is good
 const PAGING_FOR_UI_UPDATE = 10; // 10 works well
-const TIME_BETWEEN_TWO_REQUETS = 50;
+const TIME_BETWEEN_TWO_REQUETS = 25;
 
 const DATA_PAGE_SIZE = 10;
-const DATA_PAGE_OVERSCAN = 4;
+const DATA_PAGE_OVERSCAN = 2;
 
 export const useTriggerFetchPages = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
