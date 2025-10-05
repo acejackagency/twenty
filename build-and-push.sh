@@ -6,7 +6,7 @@
 set -e  # Exit on error
 
 # Configuration - UPDATE THESE VALUES
-DOCKER_USERNAME="your-dockerhub-username"  # Change this to your Docker Hub username
+DOCKER_USERNAME="alecjsullivan"  # Your Docker Hub username
 IMAGE_TAG="latest"  # You can use version numbers like "v1.0.0" instead
 
 # Image names
