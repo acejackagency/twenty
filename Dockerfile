@@ -16,7 +16,7 @@ COPY packages/twenty-shared/package.json ./packages/twenty-shared/
 COPY packages/twenty-front/package.json ./packages/twenty-front/
 
 # Install dependencies
-RUN yarn install --frozen-lockfile && npx nx reset
+RUN yarn install && npx nx reset
 
 # Copy source code
 COPY packages ./packages
