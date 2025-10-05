@@ -3,22 +3,22 @@ FROM node:18.17.1-alpine AS builder
 
 WORKDIR /app
 
-# Copy root package files
-COPY package.json yarn.lock .yarnrc.yml nx.json tsconfig.base.json ./
-COPY .yarn ./.yarn
+# Copy root package files (from repository root)
+COPY ../../package.json ../../yarn.lock ../../.yarnrc.yml ../../nx.json ../../tsconfig.base.json ./
+COPY ../../.yarn ./.yarn
 
 # Copy all package.json files for dependency resolution
-COPY packages/twenty-emails/package.json ./packages/twenty-emails/
-COPY packages/twenty-server/package.json ./packages/twenty-server/
-COPY packages/twenty-ui/package.json ./packages/twenty-ui/
-COPY packages/twenty-shared/package.json ./packages/twenty-shared/
-COPY packages/twenty-front/package.json ./packages/twenty-front/
+COPY ../../packages/twenty-emails/package.json ./packages/twenty-emails/
+COPY ../../packages/twenty-server/package.json ./packages/twenty-server/
+COPY ../../packages/twenty-ui/package.json ./packages/twenty-ui/
+COPY ../../packages/twenty-shared/package.json ./packages/twenty-shared/
+COPY ../../packages/twenty-front/package.json ./packages/twenty-front/
 
 # Install dependencies using yarn
 RUN yarn install --frozen-lockfile && npx nx reset
 
 # Copy source code
-COPY packages ./packages
+COPY ../../packages ./packages
 
 # Build dependencies and frontend
 RUN npx nx build twenty-emails && \
@@ -33,7 +33,7 @@ FROM nginx:alpine
 COPY --from=builder /app/dist/packages/twenty-front /usr/share/nginx/html
 
 # Copy nginx configuration
-COPY packages/twenty-front/nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
